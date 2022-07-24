@@ -155,7 +155,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
+  - {fileID: 2100000, guid: 40da54863d4d4c343bc9001cb11b7b6f, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
@@ -294,6 +294,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5735074538701853469}
+  - component: {fileID: 1866468638122054354}
   m_Layer: 0
   m_Name: Bone
   m_TagString: Untagged
@@ -319,6 +320,28 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &1866468638122054354
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5735074538701853466}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bf6bc2b9d9b193c458c64a0cad1d3c10, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Target: {fileID: 0}
+  State: 0
+  Sphere: {fileID: 5735074537889446826}
+  Line: {fileID: 5735074538498120635}
+  Collider: {fileID: 5735074538353687022}
+  BoneC: {fileID: 2100000, guid: cdb8c07216f94ad4b9e3c4786dbe3062, type: 2}
+  BoneM: {fileID: 2100000, guid: 45a4c7f9310dfd342bf98c785237871d, type: 2}
+  BoneY: {fileID: 2100000, guid: 853547116768d15439ddfb29a76dce3a, type: 2}
+  BoneR: {fileID: 2100000, guid: bb01afe6b469d6e4c911dc7292fb4919, type: 2}
+  TextMeshPro: {fileID: 5735074539393692583}
 --- !u!1 &5735074539393692581
 GameObject:
   m_ObjectHideFlags: 0

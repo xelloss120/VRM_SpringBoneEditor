@@ -48,28 +48,28 @@ public class Move : MonoBehaviour
         }
     }
 
-    public void UpDown()
+    public void OnClickUpDown()
     {
         Type = EnumType.UpDown;
         Target = Vector3.up * Range;
         SetBoneActive(false);
     }
 
-    public void LeftRight()
+    public void OnClickLeftRight()
     {
         Type = EnumType.LeftRight;
         Target = Vector3.left * Range;
         SetBoneActive(false);
     }
 
-    public void FrontBack()
+    public void OnClickForwardBack()
     {
         Type = EnumType.FrontBack;
         Target = Vector3.forward * Range;
         SetBoneActive(false);
     }
 
-    public void Stop()
+    public void OnClickStop()
     {
         Type = EnumType.Stop;
         Target = Vector3.zero;
