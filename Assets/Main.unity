@@ -1371,6 +1371,7 @@ GameObject:
   - component: {fileID: 563644578}
   - component: {fileID: 563644583}
   - component: {fileID: 563644582}
+  - component: {fileID: 563644584}
   - component: {fileID: 563644581}
   - component: {fileID: 563644580}
   - component: {fileID: 563644579}
@@ -1422,7 +1423,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   Import: {fileID: 563644583}
   Range: 0.1
-  Speed: 0.005
+  Speed: 0.5
 --- !u!114 &563644581
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1438,6 +1439,7 @@ MonoBehaviour:
   MouseSelect: 0
   Import: {fileID: 563644583}
   Mouse: {fileID: 563644582}
+  Select: {fileID: 0}
   Dropdown: {fileID: 1901077657}
   Size: {fileID: 1968927946}
   OffsetX: {fileID: 1693829749}
@@ -1455,15 +1457,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: df7769734f0bf374bb22e4d031ff402a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  Select: {fileID: 0}
-  Import: {fileID: 563644583}
-  Editor: {fileID: 563644581}
-  BoneName: {fileID: 2050258263}
-  Dropdown: {fileID: 1901077657}
-  Size: {fileID: 1968927946}
-  OffsetX: {fileID: 1693829749}
-  OffsetY: {fileID: 767070203}
-  OffsetZ: {fileID: 394764253}
   ViewPoint: {fileID: 1789066173}
   Camera: {fileID: 963194227}
   Angle_Speed: 1
@@ -1486,6 +1479,28 @@ MonoBehaviour:
   BoneName: {fileID: 2050258263}
   Dropdown: {fileID: 1901077657}
   Camera: {fileID: 963194228}
+--- !u!114 &563644584
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 563644577}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7c0a731dca6d15b40b5d0500ed50fd53, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Bone: {fileID: 0}
+  Import: {fileID: 0}
+  Editor: {fileID: 0}
+  BoneName: {fileID: 0}
+  Dropdown: {fileID: 0}
+  Size: {fileID: 0}
+  OffsetX: {fileID: 0}
+  OffsetY: {fileID: 0}
+  OffsetZ: {fileID: 0}
+  ViewPoint: {fileID: 0}
 --- !u!1 &585786762
 GameObject:
   m_ObjectHideFlags: 0
