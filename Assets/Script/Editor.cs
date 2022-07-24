@@ -17,6 +17,7 @@ public class Editor : MonoBehaviour
 
     [SerializeField] Import Import;
     [SerializeField] Mouse Mouse;
+    [SerializeField] Select Select;
     [SerializeField] Dropdown Dropdown;
 
     [SerializeField] InputField Size;
@@ -34,18 +35,16 @@ public class Editor : MonoBehaviour
         var text = Dropdown.options[value].text;
 
         var springs = Import.Root.GetComponentsInChildren<VRMSpringBone>();
-        var bone = Mouse.Select.gameObject.GetComponent<Bone>();
-        Debug.Log(text + " : " + bone.Target.gameObject.name);
         switch (text)
         {
             case VRMSB_None:
-                None(springs, bone);
+                None(springs, Select.Bone);
                 break;
             case VRMSB_Collider:
-                Collider(springs, bone);
+                Collider(springs, Select.Bone);
                 break;
             default:
-                Spring(springs, bone, text);
+                Spring(springs, Select.Bone, text);
                 break;
         }
     }
@@ -71,11 +70,9 @@ public class Editor : MonoBehaviour
                     if (transform.position == bone.Target.position)
                     {
                         spring.RootBones.Remove(transform);
-                        //break;
                     }
                 }
 
-                //spring.RootBones.Remove(bone.Target);
                 spring.Setup();
                 bone.State = Bone.StateType.None;
             }
@@ -173,9 +170,9 @@ public class Editor : MonoBehaviour
         {
             return;
         }
-        var collider = Mouse.Select.Target.GetComponent<VRMSpringBoneColliderGroup>();
+        var collider = Select.Bone.Target.GetComponent<VRMSpringBoneColliderGroup>();
         collider.Colliders[0].Radius = float.Parse(text);
-        Mouse.Select.Select();
+        Select.Bone.Select();
     }
 
     public void OnValueChangedOffsetX(string text)
@@ -184,11 +181,11 @@ public class Editor : MonoBehaviour
         {
             return;
         }
-        var collider = Mouse.Select.Target.GetComponent<VRMSpringBoneColliderGroup>();
+        var collider = Select.Bone.Target.GetComponent<VRMSpringBoneColliderGroup>();
         var offset = collider.Colliders[0].Offset;
         offset.x = float.Parse(text);
         collider.Colliders[0].Offset = offset;
-        Mouse.Select.Select();
+        Select.Bone.Select();
     }
 
     public void OnValueChangedOffsetY(string text)
@@ -197,11 +194,11 @@ public class Editor : MonoBehaviour
         {
             return;
         }
-        var collider = Mouse.Select.Target.GetComponent<VRMSpringBoneColliderGroup>();
+        var collider = Select.Bone.Target.GetComponent<VRMSpringBoneColliderGroup>();
         var offset = collider.Colliders[0].Offset;
         offset.y = float.Parse(text);
         collider.Colliders[0].Offset = offset;
-        Mouse.Select.Select();
+        Select.Bone.Select();
     }
 
     public void OnValueChangedOffsetZ(string text)
@@ -210,10 +207,10 @@ public class Editor : MonoBehaviour
         {
             return;
         }
-        var collider = Mouse.Select.Target.GetComponent<VRMSpringBoneColliderGroup>();
+        var collider = Select.Bone.Target.GetComponent<VRMSpringBoneColliderGroup>();
         var offset = collider.Colliders[0].Offset;
         offset.z = float.Parse(text);
         collider.Colliders[0].Offset = offset;
-        Mouse.Select.Select();
+        Select.Bone.Select();
     }
 }

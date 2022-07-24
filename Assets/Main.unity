@@ -1492,15 +1492,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   Bone: {fileID: 0}
-  Import: {fileID: 0}
-  Editor: {fileID: 0}
-  BoneName: {fileID: 0}
-  Dropdown: {fileID: 0}
-  Size: {fileID: 0}
-  OffsetX: {fileID: 0}
-  OffsetY: {fileID: 0}
-  OffsetZ: {fileID: 0}
-  ViewPoint: {fileID: 0}
+  Import: {fileID: 563644583}
+  Editor: {fileID: 563644581}
+  BoneName: {fileID: 2050258263}
+  Dropdown: {fileID: 1901077657}
+  Size: {fileID: 1968927946}
+  OffsetX: {fileID: 1693829749}
+  OffsetY: {fileID: 767070203}
+  OffsetZ: {fileID: 394764253}
 --- !u!1 &585786762
 GameObject:
   m_ObjectHideFlags: 0
