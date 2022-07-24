@@ -1,6 +1,6 @@
 using UnityEngine;
 
-public class Mouse : MonoBehaviour
+public class CtrlCam : MonoBehaviour
 {
     [SerializeField] Transform ViewPoint;
     [SerializeField] Camera Camera;

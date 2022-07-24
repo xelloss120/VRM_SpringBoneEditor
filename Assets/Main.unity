@@ -1438,8 +1438,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   MouseSelect: 0
   Import: {fileID: 563644583}
-  Mouse: {fileID: 563644582}
-  Select: {fileID: 0}
+  Select: {fileID: 563644584}
   Dropdown: {fileID: 1901077657}
   Size: {fileID: 1968927946}
   OffsetX: {fileID: 1693829749}

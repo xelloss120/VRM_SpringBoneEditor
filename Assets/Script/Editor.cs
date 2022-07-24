@@ -16,7 +16,6 @@ public class Editor : MonoBehaviour
     public bool MouseSelect = false;
 
     [SerializeField] Import Import;
-    [SerializeField] Mouse Mouse;
     [SerializeField] Select Select;
     [SerializeField] Dropdown Dropdown;
 
