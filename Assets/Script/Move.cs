@@ -4,16 +4,16 @@ public class Move : MonoBehaviour
 {
     [SerializeField] Import Import;
     [SerializeField] float Range = 0.1f;
-    [SerializeField] float Speed = 0.005f;
+    [SerializeField] float Speed = 0.5f;
 
-    enum EnumType
+    enum CtrlType
     {
         UpDown,
         LeftRight,
-        FrontBack,
+        ForwardBack,
         Stop
     }
-    EnumType Type;
+    CtrlType Type;
 
     Vector3 Target = Vector3.zero;
 
@@ -24,20 +24,22 @@ public class Move : MonoBehaviour
         var pos = Import.Root.transform.position;
         switch(Type)
         {
-            case EnumType.UpDown:
+            case CtrlType.UpDown:
                 if (pos == Vector3.up * Range) Target = Vector3.down * Range;
                 if (pos == Vector3.down * Range) Target = Vector3.up * Range;
                 break;
-            case EnumType.LeftRight:
+            case CtrlType.LeftRight:
                 if (pos == Vector3.left * Range) Target = Vector3.right * Range;
                 if (pos == Vector3.right * Range) Target = Vector3.left * Range;
                 break;
-            case EnumType.FrontBack:
+            case CtrlType.ForwardBack:
                 if (pos == Vector3.forward * Range) Target = Vector3.back * Range;
                 if (pos == Vector3.back * Range) Target = Vector3.forward * Range;
                 break;
         }
-        Import.Root.transform.position = Vector3.MoveTowards(pos, Target, Speed);
+
+        float step = Speed * Time.deltaTime;
+        Import.Root.transform.position = Vector3.MoveTowards(pos, Target, step);
     }
 
     void SetBoneActive(bool active)
@@ -50,28 +52,28 @@ public class Move : MonoBehaviour
 
     public void OnClickUpDown()
     {
-        Type = EnumType.UpDown;
+        Type = CtrlType.UpDown;
         Target = Vector3.up * Range;
         SetBoneActive(false);
     }
 
     public void OnClickLeftRight()
     {
-        Type = EnumType.LeftRight;
+        Type = CtrlType.LeftRight;
         Target = Vector3.left * Range;
         SetBoneActive(false);
     }
 
     public void OnClickForwardBack()
     {
-        Type = EnumType.FrontBack;
+        Type = CtrlType.ForwardBack;
         Target = Vector3.forward * Range;
         SetBoneActive(false);
     }
 
     public void OnClickStop()
     {
-        Type = EnumType.Stop;
+        Type = CtrlType.Stop;
         Target = Vector3.zero;
         SetBoneActive(true);
     }
