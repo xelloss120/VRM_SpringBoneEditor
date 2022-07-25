@@ -4,10 +4,9 @@ using VRM;
 
 public class Select : MonoBehaviour
 {
-    public Bone Bone;
+    public bool Changing;
 
     [SerializeField] Import Import;
-    [SerializeField] Editor Editor;
 
     [SerializeField] Text BoneName;
     [SerializeField] Dropdown Dropdown;
@@ -17,12 +16,6 @@ public class Select : MonoBehaviour
     [SerializeField] InputField OffsetY;
     [SerializeField] InputField OffsetZ;
 
-    /// <summary>
-    /// ボーン選択
-    /// </summary>
-    /// <remarks>
-    /// https://tech.pjin.jp/blog/2018/09/03/unity_get-clicked-gameobject/
-    /// </remarks>
     void Update()
     {
         var pos = Input.mousePosition;
@@ -32,6 +25,8 @@ public class Select : MonoBehaviour
             return;
         }
 
+        // 参考
+        // https://tech.pjin.jp/blog/2018/09/03/unity_get-clicked-gameobject/
         if (Input.GetMouseButtonDown(0))
         {
             var ray = Camera.main.ScreenPointToRay(Input.mousePosition);
@@ -39,15 +34,17 @@ public class Select : MonoBehaviour
 
             if (Physics.Raycast(ray, out hit))
             {
-                var bone = hit.collider.gameObject.transform.parent.GetComponent<Bone>();
+                var bone = hit.collider.transform.parent.GetComponent<Bone>();
                 if (bone != null)
                 {
-                    Editor.MouseSelect = true;
+                    // 操作用のボーンUIの選択
+                    Changing = true;
 
-                    Bone = bone;
                     bone.Select();
 
                     BoneName.text = bone.Target.name;
+
+                    Dropdown.value = 0;
 
                     Size.text = "";
                     OffsetX.text = "";
@@ -59,21 +56,22 @@ public class Select : MonoBehaviour
                     OffsetY.interactable = false;
                     OffsetZ.interactable = false;
 
-                    var value = 0;
                     var springs = Import.Root.GetComponentsInChildren<VRMSpringBone>();
                     foreach (var spring in springs)
                     {
                         if (spring.RootBones != null)
                         {
-                            foreach (var b in spring.RootBones)
+                            // 揺れ物
+                            foreach (var item in spring.RootBones)
                             {
-                                if (bone.Target == b)
+                                if (bone.Target == item)
                                 {
                                     for (int i = 0; i < Dropdown.options.Count; i++)
                                     {
                                         if (spring.m_comment == Dropdown.options[i].text)
                                         {
-                                            value = i;
+                                            // 操作用ボーンUIの対象が揺れ物ならDropdownから対応する揺れ物を選択
+                                            Dropdown.value = i;
                                         }
                                     }
                                 }
@@ -81,29 +79,29 @@ public class Select : MonoBehaviour
                         }
                         if (spring.ColliderGroups != null)
                         {
-                            foreach (var b in spring.ColliderGroups)
+                            // 当たり判定
+                            foreach (var item in spring.ColliderGroups)
                             {
-                                if (bone.Target == b.gameObject.transform)
+                                if (bone.Target == item.transform)
                                 {
-                                    value = Dropdown.options.Count - 1;
+                                    // 操作用ボーンUIの対象が当たり判定ならDropdownから当たり判定を選択
+                                    Dropdown.value = Dropdown.options.Count - 1;
 
                                     Size.interactable = true;
                                     OffsetX.interactable = true;
                                     OffsetY.interactable = true;
                                     OffsetZ.interactable = true;
 
-                                    Size.text = b.Colliders[0].Radius.ToString();
-                                    OffsetX.text = b.Colliders[0].Offset.x.ToString();
-                                    OffsetY.text = b.Colliders[0].Offset.y.ToString();
-                                    OffsetZ.text = b.Colliders[0].Offset.z.ToString();
+                                    Size.text = item.Colliders[0].Radius.ToString();
+                                    OffsetX.text = item.Colliders[0].Offset.x.ToString();
+                                    OffsetY.text = item.Colliders[0].Offset.y.ToString();
+                                    OffsetZ.text = item.Colliders[0].Offset.z.ToString();
                                 }
                             }
                         }
                     }
 
-                    Dropdown.value = value;
-
-                    Editor.MouseSelect = false;
+                    Changing = false;
                 }
             }
         }

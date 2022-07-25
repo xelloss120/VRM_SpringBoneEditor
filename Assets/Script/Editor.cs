@@ -13,10 +13,9 @@ public class Editor : MonoBehaviour
     public const string VRMSB_Set = "設定済み";
     public const string VRMSB_Collider = "当たり判定";
 
-    public bool MouseSelect = false;
-
     [SerializeField] Import Import;
     [SerializeField] Select Select;
+
     [SerializeField] Dropdown Dropdown;
 
     [SerializeField] InputField Size;
@@ -26,7 +25,7 @@ public class Editor : MonoBehaviour
 
     public void OnValueChanged(int value)
     {
-        if (MouseSelect)
+        if (Select.Changing)
         {
             return;
         }
@@ -37,27 +36,33 @@ public class Editor : MonoBehaviour
         switch (text)
         {
             case VRMSB_None:
-                None(springs, Select.Bone);
+                Delete(springs);
                 break;
             case VRMSB_Collider:
-                Collider(springs, Select.Bone);
+                Collider(springs);
                 break;
             default:
-                Spring(springs, Select.Bone, text);
+                Spring(springs, text);
                 break;
         }
     }
 
-    void None(VRMSpringBone[] springs, Bone bone)
+    /// <summary>
+    /// 揺れ物または当たり判定の設定を削除
+    /// </summary>
+    void Delete(VRMSpringBone[] springs)
     {
         bool delete;
+        bool deleteCollider = false;
         foreach (var spring in springs)
         {
+            // 揺れ物
             delete = false;
-            foreach (var b in spring.RootBones)
+            foreach (var bone in spring.RootBones)
             {
-                if (bone.Target == b)
+                if (Bone.Selected.Target == bone)
                 {
+                    // 揺れ物設定されているボーンなら後で削除
                     delete = true;
                 }
             }
@@ -66,76 +71,96 @@ public class Editor : MonoBehaviour
                 var transforms = Import.Root.GetComponentsInChildren<Transform>();
                 foreach (var transform in transforms)
                 {
-                    if (transform.position == bone.Target.position)
+                    if (Bone.Selected.Target.position == transform.position)
                     {
+                        // 操作用ボーンUIの対象と同じ位置のボーンを削除（着せ替えなどに対応するため）
                         spring.RootBones.Remove(transform);
                     }
                 }
-
+                // 表示上も削除
                 spring.Setup();
-                bone.State = Bone.StateType.None;
+                Bone.Selected.State = Bone.StateType.None;
+                Bone.Selected.SetText("");
             }
+
+            // 当たり判定
             delete = false;
             if (spring.ColliderGroups != null)
             {
-                foreach (var b in spring.ColliderGroups)
+                foreach (var item in spring.ColliderGroups)
                 {
-                    if (bone.Target == b.gameObject.transform)
+                    if (Bone.Selected.Target == item.transform)
                     {
-                        delete = true;
+                        // 当たり判定設定されているボーンなら後で削除
+                        deleteCollider = delete = true;
+                        
                     }
                 }
                 if (delete)
                 {
-                    var collider = bone.Target.gameObject.GetComponent<VRMSpringBoneColliderGroup>();
+                    // 当たり判定のコンポーネント自体は後で削除（二回目以降を回すため）
                     var list = spring.ColliderGroups.ToList();
+                    var collider = Bone.Selected.Target.GetComponent<VRMSpringBoneColliderGroup>();
                     list.Remove(collider);
                     spring.ColliderGroups = list.ToArray();
-                    DestroyImmediate(collider);
-                    bone.State = Bone.StateType.None;
-                    bone.Select();
                 }
             }
         }
-        bone.SetTest("");
+        if (deleteCollider)
+        {
+            // 当たり判定のコンポーネントを削除
+            var collider = Bone.Selected.Target.GetComponent<VRMSpringBoneColliderGroup>();
+            DestroyImmediate(collider);
+
+            // 表示上も削除
+            Bone.Selected.State = Bone.StateType.None;
+            Bone.Selected.UpdateCollider();
+        }
     }
 
-    void Spring(VRMSpringBone[] springs, Bone bone, string comment)
+    /// <summary>
+    /// 揺れ物を設定
+    /// </summary>
+    void Spring(VRMSpringBone[] springs, string comment)
     {
-        None(springs, bone);
+        // 設定済みのボーンがあれば削除
+        Delete(springs);
 
         foreach (var spring in springs)
         {
             if (spring.m_comment == comment)
             {
-                spring.RootBones.Add(bone.Target);
-
                 var transforms = Import.Root.GetComponentsInChildren<Transform>();
                 foreach (var transform in transforms)
                 {
-                    if (transform.position == bone.Target.position && transform != bone.Target)
+                    if (Bone.Selected.Target.position == transform.position)
                     {
+                        // 操作用ボーンUIの対象と同じ位置のボーンを揺れ物として設定（着せ替えなどに対応するため）
                         spring.RootBones.Add(transform);
-                        break;
                     }
                 }
 
-                bone.State = Bone.StateType.SpringBone;
+                // 表示上も設定
                 spring.Setup();
+                Bone.Selected.State = Bone.StateType.SpringBone;
+                Bone.Selected.SetText(comment);
             }
         }
-
-        bone.SetTest(comment);
     }
 
-    void Collider(VRMSpringBone[] springs, Bone bone)
+    /// <summary>
+    /// 当たり判定の設定
+    /// </summary>
+    void Collider(VRMSpringBone[] springs)
     {
-        None(springs, bone);
+        // 設定済みのボーンがあれば削除
+        Delete(springs);
 
-        var tmp = bone.Target.gameObject.AddComponent<VRMSpringBoneColliderGroup>();
+        var collider = Bone.Selected.Target.gameObject.AddComponent<VRMSpringBoneColliderGroup>();
 
         foreach (var spring in springs)
         {
+            // 全ての揺れ物に当たり判定を設定
             List<VRMSpringBoneColliderGroup> list;
             if (spring.ColliderGroups != null)
             {
@@ -145,71 +170,84 @@ public class Editor : MonoBehaviour
             {
                 list = new List<VRMSpringBoneColliderGroup>();
             }
-            list.Add(tmp);
+            list.Add(collider);
             spring.ColliderGroups = list.ToArray();
         }
 
-        bone.State = Bone.StateType.Collider;
-        bone.Select();
+        // 表示上も設定
+        Bone.Selected.State = Bone.StateType.Collider;
+        Bone.Selected.UpdateCollider();
 
         Size.interactable = true;
         OffsetX.interactable = true;
         OffsetY.interactable = true;
         OffsetZ.interactable = true;
 
-        Size.text = tmp.Colliders[0].Radius.ToString();
-        OffsetX.text = tmp.Colliders[0].Offset.x.ToString();
-        OffsetY.text = tmp.Colliders[0].Offset.y.ToString();
-        OffsetZ.text = tmp.Colliders[0].Offset.z.ToString();
+        Size.text = collider.Colliders[0].Radius.ToString();
+        OffsetX.text = collider.Colliders[0].Offset.x.ToString();
+        OffsetY.text = collider.Colliders[0].Offset.y.ToString();
+        OffsetZ.text = collider.Colliders[0].Offset.z.ToString();
     }
 
     public void OnValueChangedSize(string text)
     {
-        if (MouseSelect)
+        if (Select.Changing)
         {
             return;
         }
-        var collider = Select.Bone.Target.GetComponent<VRMSpringBoneColliderGroup>();
-        collider.Colliders[0].Radius = float.Parse(text);
-        Select.Bone.Select();
+        var collider = Bone.Selected.Target.GetComponent<VRMSpringBoneColliderGroup>();
+        if (float.TryParse(text, out float value))
+        {
+            collider.Colliders[0].Radius = value;
+            Bone.Selected.UpdateCollider();
+        }
     }
 
     public void OnValueChangedOffsetX(string text)
     {
-        if (MouseSelect)
+        if (Select.Changing)
         {
             return;
         }
-        var collider = Select.Bone.Target.GetComponent<VRMSpringBoneColliderGroup>();
-        var offset = collider.Colliders[0].Offset;
-        offset.x = float.Parse(text);
-        collider.Colliders[0].Offset = offset;
-        Select.Bone.Select();
+        var collider = Bone.Selected.Target.GetComponent<VRMSpringBoneColliderGroup>();
+        if (float.TryParse(text, out float value))
+        {
+            var offset = collider.Colliders[0].Offset;
+            offset.x = value;
+            collider.Colliders[0].Offset = offset;
+            Bone.Selected.UpdateCollider();
+        }
     }
 
     public void OnValueChangedOffsetY(string text)
     {
-        if (MouseSelect)
+        if (Select.Changing)
         {
             return;
         }
-        var collider = Select.Bone.Target.GetComponent<VRMSpringBoneColliderGroup>();
-        var offset = collider.Colliders[0].Offset;
-        offset.y = float.Parse(text);
-        collider.Colliders[0].Offset = offset;
-        Select.Bone.Select();
+        var collider = Bone.Selected.Target.GetComponent<VRMSpringBoneColliderGroup>();
+        if (float.TryParse(text, out float value))
+        {
+            var offset = collider.Colliders[0].Offset;
+            offset.y = value;
+            collider.Colliders[0].Offset = offset;
+            Bone.Selected.UpdateCollider();
+        }
     }
 
     public void OnValueChangedOffsetZ(string text)
     {
-        if (MouseSelect)
+        if (Select.Changing)
         {
             return;
         }
-        var collider = Select.Bone.Target.GetComponent<VRMSpringBoneColliderGroup>();
-        var offset = collider.Colliders[0].Offset;
-        offset.z = float.Parse(text);
-        collider.Colliders[0].Offset = offset;
-        Select.Bone.Select();
+        var collider = Bone.Selected.Target.GetComponent<VRMSpringBoneColliderGroup>();
+        if (float.TryParse(text, out float value))
+        {
+            var offset = collider.Colliders[0].Offset;
+            offset.z = value;
+            collider.Colliders[0].Offset = offset;
+            Bone.Selected.UpdateCollider();
+        }
     }
 }

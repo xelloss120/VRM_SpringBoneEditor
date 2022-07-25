@@ -23,6 +23,11 @@ public class CtrlCam : MonoBehaviour
             // ‰æ–ÊŠO‘€ì‚Ì–³‹
             return;
         }
+        if (pos.x < 160 && pos.y > Screen.height - 240)
+        {
+            // UIã‘€ì‚Ì–³‹
+            return;
+        }
 
         if (Input.GetMouseButtonDown(0) || Input.GetMouseButtonDown(1))
         {

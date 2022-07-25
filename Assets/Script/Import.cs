@@ -9,11 +9,13 @@ public class Import : MonoBehaviour
     public GameObject Root;
 
     [SerializeField] GameObject BonePrefab;
-
-    [SerializeField] Text BoneName;
     [SerializeField] Dropdown Dropdown;
-
     [SerializeField] Transform Camera;
+
+    void Start()
+    {
+        Bone.Camera = Camera;
+    }
 
     public async void OnClick()
     {
@@ -25,23 +27,19 @@ public class Import : MonoBehaviour
         instance.EnableUpdateWhenOffscreen();
         instance.ShowMeshes();
 
-        foreach (var bone in Bone.List)
-        {
-            Destroy(bone.gameObject);
-        }
-        Bone.List.Clear();
         Destroy(Root);
-
         Root = instance.Root;
 
-        SetSpring();
-        SetBone();
-
-        Bone.Camera = Camera;
+        InitSpring();
+        InitBone();
     }
 
-    void SetSpring()
+    /// <summary>
+    /// 揺れ物に関する初期化
+    /// </summary>
+    void InitSpring()
     {
+        // 本ツールの揺れ物プリセット有無を確認
         var springs = Root.GetComponentsInChildren<VRMSpringBone>();
         var normalSet = true;
         var softSet = true;
@@ -62,6 +60,7 @@ public class Import : MonoBehaviour
             }
         }
 
+        // 本ツールの揺れ物プリセットが無ければ追加
         var secondary = Root.transform.Find("secondary").gameObject;
         if (normalSet)
         {
@@ -82,6 +81,7 @@ public class Import : MonoBehaviour
             hard.m_stiffnessForce = 4.0f;
         }
 
+        // Dropdownの初期化
         var list = new List<string>();
         list.Add(Editor.VRMSB_None);
 
@@ -89,67 +89,85 @@ public class Import : MonoBehaviour
         springs = Root.GetComponentsInChildren<VRMSpringBone>();
         foreach (var spring in springs)
         {
+            // 揺れ物の設定名をDropdownに追加
             if (spring.m_comment == null || spring.m_comment == "")
             {
+                // 無名の場合は連番名を付与
                 spring.m_comment = Editor.VRMSB_Set + no;
                 no++;
             }
             list.Add(spring.m_comment);
         }
+
+        // 当たり判定用の選択項目を追加
         list.Add(Editor.VRMSB_Collider);
 
         Dropdown.ClearOptions();
         Dropdown.AddOptions(list);
     }
 
-    void SetBone()
+    /// <summary>
+    /// 操作用のボーンUIを初期化
+    /// </summary>
+    void InitBone()
     {
+        // 全削除
+        foreach (var bone in Bone.List)
+        {
+            Destroy(bone.gameObject);
+        }
+        Bone.List.Clear();
+
+        // 追加
         var springs = Root.GetComponentsInChildren<VRMSpringBone>();
         var transforms = Root.GetComponentsInChildren<Transform>();
         foreach (var transform in transforms)
         {
-            // 重複確認
-            bool check = false;
-            foreach(var b in Bone.List)
+            // ボーン位置の重複確認
+            bool duplicate = false;
+            foreach(var item in Bone.List)
             {
-                if (b.Target.position == transform.position)
+                if (item.Target.position == transform.position)
                 {
-                    //Debug.Log("重複発生" + b.Target.name + " : " + transform.name);
-                    check = true;
+                    duplicate = true;
                 }
             }
-            if (check)
+            if (duplicate)
             {
+                // 重複する場合は中断
                 continue;
             }
 
+            // ボーンUIの生成
             var obj = Instantiate(BonePrefab);
             var bone = obj.GetComponent<Bone>();
             bone.Target = transform;
-            var state = Bone.StateType.None;
+
+            // ボーン状態の取得
+            bone.SetState(Bone.StateType.None);
             foreach (var spring in springs)
             {
-                foreach (var b in spring.RootBones)
+                foreach (var item in spring.RootBones)
                 {
-                    if (transform == b)
+                    if (transform == item)
                     {
-                        bone.SetTest(spring.m_comment);
-                        state = Bone.StateType.SpringBone;
+                        // 揺れ物
+                        bone.SetText(spring.m_comment);
+                        bone.SetState(Bone.StateType.SpringBone);
                     }
                 }
                 if (spring.ColliderGroups == null) continue;
-                foreach (var b in spring.ColliderGroups)
+                foreach (var item in spring.ColliderGroups)
                 {
-                    if (transform == b.transform)
+                    if (transform == item.transform)
                     {
-                        state = Bone.StateType.Collider;
+                        // 当たり判定
+                        bone.SetState(Bone.StateType.Collider);
                     }
                 }
             }
-            bone.Setting(state);
+
             Bone.List.Add(bone);
         }
-
-        BoneName.text = "BoneName";
     }
 }

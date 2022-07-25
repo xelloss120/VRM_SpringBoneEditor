@@ -106,7 +106,6 @@ GameObject:
   - component: {fileID: 5735074538353687025}
   - component: {fileID: 5735074538353687026}
   - component: {fileID: 5735074538353687027}
-  - component: {fileID: 5735074538353687024}
   m_Layer: 0
   m_Name: Collider
   m_TagString: Untagged
@@ -177,19 +176,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &5735074538353687024
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5735074538353687022}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.5
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5735074538498120635
 GameObject:
   m_ObjectHideFlags: 0
@@ -201,7 +187,6 @@ GameObject:
   - component: {fileID: 5735074538498120634}
   - component: {fileID: 5735074538498120639}
   - component: {fileID: 5735074538498120636}
-  - component: {fileID: 5735074538498120637}
   m_Layer: 0
   m_Name: Line
   m_TagString: Untagged
@@ -272,19 +257,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!65 &5735074538498120637
-BoxCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 5735074538498120635}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Size: {x: 1, y: 1, z: 1}
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &5735074538701853466
 GameObject:
   m_ObjectHideFlags: 0
@@ -337,11 +309,11 @@ MonoBehaviour:
   Sphere: {fileID: 5735074537889446826}
   Line: {fileID: 5735074538498120635}
   Collider: {fileID: 5735074538353687022}
+  TextMeshPro: {fileID: 5735074539393692583}
   BoneC: {fileID: 2100000, guid: cdb8c07216f94ad4b9e3c4786dbe3062, type: 2}
   BoneM: {fileID: 2100000, guid: 45a4c7f9310dfd342bf98c785237871d, type: 2}
   BoneY: {fileID: 2100000, guid: 853547116768d15439ddfb29a76dce3a, type: 2}
   BoneR: {fileID: 2100000, guid: bb01afe6b469d6e4c911dc7292fb4919, type: 2}
-  TextMeshPro: {fileID: 5735074539393692583}
 --- !u!1 &5735074539393692581
 GameObject:
   m_ObjectHideFlags: 0
